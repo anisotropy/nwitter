@@ -7,6 +7,7 @@ const Auth = () => {
     email: "",
     password: "",
     isNewUser: true,
+    error: "",
   });
   const auth = getAuth();
 
@@ -17,26 +18,23 @@ const Auth = () => {
     }));
   };
 
+  const onToggle = () => {
+    setState((prevState) => ({
+      ...prevState,
+      isNewUser: !prevState.isNewUser,
+    }));
+  };
+
   const onSubmit = async (event) => {
     event.preventDefault();
     try {
-      let userCredential;
       if (state.isNewUser) {
-        userCredential = await signUp.withEmailAndPw(
-          auth,
-          state.email,
-          state.password
-        );
+        await signUp.withEmailAndPw(auth, state.email, state.password);
       } else {
-        userCredential = await signIn.withEmailAndPw(
-          auth,
-          state.email,
-          state.password
-        );
+        await signIn.withEmailAndPw(auth, state.email, state.password);
       }
-      console.log(userCredential);
     } catch (error) {
-      console.log(error);
+      setState({ ...state, error: error.message });
     }
   };
 
@@ -55,8 +53,19 @@ const Auth = () => {
           value={state.password}
           onChange={onChange}
         />
-        <button type="submit">{state.isNewUser ? "Sign up" : "Sign in"}</button>
+        <button type="submit">
+          {state.isNewUser ? "Sign up with Email" : "Log in with Email"}
+        </button>
+        <label>
+          <input
+            type="checkbox"
+            checked={state.isNewUser}
+            onChange={onToggle}
+          />
+          Sign up
+        </label>
       </form>
+      {state.error && <p>{state.error}</p>}
       <button>Login with Google</button>
       <button>Login with GitHub</button>
     </div>

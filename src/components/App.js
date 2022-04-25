@@ -1,12 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pages from "components/Pages";
-import { getAuth } from "appFb";
+import { getAuth, onChangeAuthState } from "appFb";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(getAuth().currentUser);
+  const auth = getAuth();
+  const [state, setState] = useState({
+    isLoggedIn: false,
+    isInitialized: false,
+  });
+
+  useEffect(() => {
+    onChangeAuthState(auth, (user) => {
+      if (user) {
+        setState((prevState) => ({
+          ...prevState,
+          isLoggedIn: true,
+          isInitialized: true,
+        }));
+      } else {
+        setState((prevState) => ({
+          ...prevState,
+          isLoggedIn: false,
+          isInitialized: true,
+        }));
+      }
+    });
+  }, [auth]);
+
   return (
     <>
-      <Pages isLoggedIn={isLoggedIn} />
+      {state.isInitialized ? (
+        <Pages isLoggedIn={state.isLoggedIn} />
+      ) : (
+        <div>Initializing...</div>
+      )}
       <footer>&copy; {new Date().getFullYear()} Nwitter</footer>
     </>
   );

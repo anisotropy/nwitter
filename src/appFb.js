@@ -3,6 +3,7 @@ import {
   getAuth as getFbAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -19,5 +20,6 @@ const app = initializeApp(firebaseConfig);
 export const getAuth = getFbAuth;
 export const signUp = { withEmailAndPw: createUserWithEmailAndPassword };
 export const signIn = { withEmailAndPw: signInWithEmailAndPassword };
+export const onChangeAuthState = onAuthStateChanged;
 
 export default app;
