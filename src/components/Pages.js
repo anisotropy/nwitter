@@ -1,8 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Home from "pages/Home";
-import Auth from "pages/Auth";
+import HomePage from "pages/HomePage";
+import AuthPage from "pages/AuthPage";
 import Navitation from "./Navigation";
-import Profile from "pages/Profile";
+import ProfilePage from "pages/ProfilePage";
 
 const Pages = ({ isLoggedIn }) => {
   return (
@@ -10,12 +10,12 @@ const Pages = ({ isLoggedIn }) => {
       {isLoggedIn && <Navitation />}
       {isLoggedIn ? (
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       ) : (
         <Routes>
-          <Route path="/" element={<Auth />} />
+          <Route path="/" element={<AuthPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       )}
