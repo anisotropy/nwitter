@@ -1,5 +1,11 @@
-import { signIn, signUp } from "appFb";
-import { getAuth } from "firebase/auth";
+import { auth } from "appFb";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { useState } from "react";
 
 const Auth = () => {
@@ -9,7 +15,6 @@ const Auth = () => {
     isNewUser: true,
     error: "",
   });
-  const auth = getAuth();
 
   const onChange = (event) => {
     setState((prevState) => ({
@@ -29,13 +34,24 @@ const Auth = () => {
     event.preventDefault();
     try {
       if (state.isNewUser) {
-        await signUp.withEmailAndPw(auth, state.email, state.password);
+        await createUserWithEmailAndPassword(auth, state.email, state.password);
       } else {
-        await signIn.withEmailAndPw(auth, state.email, state.password);
+        await signInWithEmailAndPassword(auth, state.email, state.password);
       }
     } catch (error) {
       setState({ ...state, error: error.message });
     }
+  };
+
+  const onSocialLogin = async (event) => {
+    let provider;
+    if (event.target.name === "google") {
+      provider = new GoogleAuthProvider();
+    } else if (event.target.name === "github") {
+      provider = new GithubAuthProvider();
+    }
+    const result = await signInWithPopup(auth, provider);
+    console.log(result);
   };
 
   return (
@@ -66,8 +82,12 @@ const Auth = () => {
         </label>
       </form>
       {state.error && <p>{state.error}</p>}
-      <button>Login with Google</button>
-      <button>Login with GitHub</button>
+      <button name="google" onClick={onSocialLogin}>
+        Login with Google
+      </button>
+      <button name="github" onClick={onSocialLogin}>
+        Login with GitHub
+      </button>
     </div>
   );
 };

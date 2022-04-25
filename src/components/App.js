@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import Pages from "components/Pages";
-import { getAuth, onChangeAuthState } from "appFb";
+import { auth } from "appFb";
+import { onAuthStateChanged } from "firebase/auth";
 
 const App = () => {
-  const auth = getAuth();
   const [state, setState] = useState({
     isLoggedIn: false,
     isInitialized: false,
   });
 
   useEffect(() => {
-    onChangeAuthState(auth, (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         setState((prevState) => ({
           ...prevState,
@@ -25,7 +25,7 @@ const App = () => {
         }));
       }
     });
-  }, [auth]);
+  }, []);
 
   return (
     <>
