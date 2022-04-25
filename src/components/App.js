@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Pages from "components/Pages";
-import { auth } from "appFb";
+import { auth } from "appFirebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const App = () => {

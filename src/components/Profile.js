@@ -1,4 +1,4 @@
-import { auth } from "appFb";
+import { auth } from "appFirebase";
 import { signOut } from "firebase/auth";
 
 const Profile = () => {

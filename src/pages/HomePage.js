@@ -1,4 +1,4 @@
-import Writting from "components/Writing";
+import Writting from "components/Nweeting";
 
 const Home = () => {
   return <Writting />;

@@ -1,4 +1,4 @@
-import { auth } from "appFb";
+import { auth } from "appFirebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
