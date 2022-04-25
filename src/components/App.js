@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Pages from "components/Pages";
-import { authService } from "appFb";
+import { getAuth } from "appFb";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
+  const [isLoggedIn, setIsLoggedIn] = useState(getAuth().currentUser);
   return (
     <>
       <Pages isLoggedIn={isLoggedIn} />

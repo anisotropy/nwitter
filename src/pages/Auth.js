@@ -1,7 +1,14 @@
+import { signIn, signUp } from "appFb";
+import { getAuth } from "firebase/auth";
 import { useState } from "react";
 
 const Auth = () => {
-  const [state, setState] = useState({ email: "", password: "" });
+  const [state, setState] = useState({
+    email: "",
+    password: "",
+    isNewUser: true,
+  });
+  const auth = getAuth();
 
   const onChange = (event) => {
     setState((prevState) => ({
@@ -10,9 +17,32 @@ const Auth = () => {
     }));
   };
 
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      let userCredential;
+      if (state.isNewUser) {
+        userCredential = await signUp.withEmailAndPw(
+          auth,
+          state.email,
+          state.password
+        );
+      } else {
+        userCredential = await signIn.withEmailAndPw(
+          auth,
+          state.email,
+          state.password
+        );
+      }
+      console.log(userCredential);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
-      <form>
+      <form onSubmit={onSubmit}>
         <input
           name="email"
           type="email"
@@ -25,7 +55,7 @@ const Auth = () => {
           value={state.password}
           onChange={onChange}
         />
-        <button type="submit">Login</button>
+        <button type="submit">{state.isNewUser ? "Sign up" : "Sign in"}</button>
       </form>
       <button>Login with Google</button>
       <button>Login with GitHub</button>
