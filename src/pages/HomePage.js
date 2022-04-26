@@ -1,7 +1,7 @@
-import Writting from "components/Nweeting";
+import Nweeting from "components/Nweeting";
 
 const Home = () => {
-  return <Writting />;
+  return <Nweeting />;
 };
 
 export default Home;
