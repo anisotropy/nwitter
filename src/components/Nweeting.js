@@ -7,6 +7,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import Nweet from "./Nweet";
 
 function Nweeting({ user }) {
   const [nweet, setNweet] = useState("");
@@ -20,7 +21,6 @@ function Nweeting({ user }) {
         snapshot.forEach((doc) => {
           nweets.push({ id: doc.id, ...doc.data() });
         });
-        console.log(nweets);
         setNweets(nweets);
       }
     );
@@ -58,9 +58,11 @@ function Nweeting({ user }) {
       </form>
       <div>
         {nweets.map((nweet) => (
-          <div key={nweet.id}>
-            <h4>{nweet.text}</h4>
-          </div>
+          <Nweet
+            key={nweet.id}
+            nweet={nweet}
+            isOwner={nweet.creatorId === user.uid}
+          />
         ))}
       </div>
     </>
