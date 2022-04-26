@@ -30,6 +30,15 @@ function Nweeting({ user }) {
     setNweet(event.target.value);
   };
 
+  const onFileChange = (event) => {
+    const file = event.target.files[0];
+    const fileReader = new FileReader();
+    fileReader.onload = (fileEvent) => {
+      console.log(fileEvent.target.result);
+    };
+    fileReader.readAsDataURL(file);
+  };
+
   const onSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -54,6 +63,7 @@ function Nweeting({ user }) {
           maxLength={120}
           onChange={onChange}
         />
+        <input type="file" accept="image/*" onChange={onFileChange} />
         <button type="submit">Nweet</button>
       </form>
       <div>
