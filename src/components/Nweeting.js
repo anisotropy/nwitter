@@ -10,8 +10,7 @@ import { useEffect, useState } from "react";
 import Nweet from "./Nweet";
 
 function Nweeting({ user }) {
-  const [nweet, setNweet] = useState("");
-  const [nweets, setNweets] = useState([]);
+  const [state, setState] = useState({ nweet: "", nweets: [], attchment: "" });
 
   useEffect(() => {
     onSnapshot(
@@ -21,33 +20,40 @@ function Nweeting({ user }) {
         snapshot.forEach((doc) => {
           nweets.push({ id: doc.id, ...doc.data() });
         });
-        setNweets(nweets);
+        setState((prev) => ({ ...prev, nweets }));
       }
     );
   }, []);
 
   const onChange = (event) => {
-    setNweet(event.target.value);
+    setState((prev) => ({ ...prev, nweet: event.target.value }));
   };
 
   const onFileChange = (event) => {
     const file = event.target.files[0];
-    const fileReader = new FileReader();
-    fileReader.onload = (fileEvent) => {
-      console.log(fileEvent.target.result);
-    };
-    fileReader.readAsDataURL(file);
+    if (file) {
+      const fileReader = new FileReader();
+      fileReader.onloadend = (fileEvent) => {
+        setState((prev) => ({
+          ...prev,
+          attchment: fileEvent.currentTarget.result,
+        }));
+      };
+      fileReader.readAsDataURL(file);
+    } else {
+      setState((prev) => ({ ...prev, attchment: "" }));
+    }
   };
 
   const onSubmit = async (event) => {
     event.preventDefault();
     try {
       await addDoc(collection(database, "nweet"), {
-        text: nweet,
+        text: state.nweet,
         createdAt: Date.now(),
         creatorId: user.uid,
       });
-      setNweet("");
+      setState((prev) => ({ ...prev, nweet: "" }));
     } catch (error) {
       console.log(error);
     }
@@ -58,16 +64,19 @@ function Nweeting({ user }) {
       <form onSubmit={onSubmit}>
         <input
           type="text"
-          value={nweet}
+          value={state.nweet}
           placeholder="What's your mind?"
           maxLength={120}
           onChange={onChange}
         />
         <input type="file" accept="image/*" onChange={onFileChange} />
+        {state.attchment && (
+          <img src={state.attchment} width={50} height={50} alt="Profile" />
+        )}
         <button type="submit">Nweet</button>
       </form>
       <div>
-        {nweets.map((nweet) => (
+        {state.nweets.map((nweet) => (
           <Nweet
             key={nweet.id}
             nweet={nweet}
