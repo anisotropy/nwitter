@@ -4,13 +4,13 @@ import AuthPage from "pages/AuthPage";
 import Navitation from "./Navigation";
 import ProfilePage from "pages/ProfilePage";
 
-const Pages = ({ isLoggedIn }) => {
+const Pages = ({ isLoggedIn, user }) => {
   return (
     <BrowserRouter>
       {isLoggedIn && <Navitation />}
       {isLoggedIn ? (
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage user={user} />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       ) : (

@@ -1,25 +1,29 @@
 import { database } from "appFirebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
 
-function Nweeting() {
-  const didMount = useRef(false);
+function Nweeting({ user }) {
   const [nweet, setNweet] = useState("");
   const [nweets, setNweets] = useState([]);
 
-  const getNweets = async () => {
-    const querySnapshot = await getDocs(collection(database, "nweet"));
-    querySnapshot.forEach((doc) => {
-      setNweets((prev) => [{ id: doc.id, ...doc.data() }, ...prev]);
-    });
-  };
-
   useEffect(() => {
-    if (!didMount.current) {
-      didMount.current = true;
-      return;
-    }
-    getNweets();
+    onSnapshot(
+      query(collection(database, "nweet"), orderBy("createdAt", "desc")),
+      (snapshot) => {
+        const nweets = [];
+        snapshot.forEach((doc) => {
+          nweets.push({ id: doc.id, ...doc.data() });
+        });
+        console.log(nweets);
+        setNweets(nweets);
+      }
+    );
   }, []);
 
   const onChange = (event) => {
@@ -30,8 +34,9 @@ function Nweeting() {
     event.preventDefault();
     try {
       await addDoc(collection(database, "nweet"), {
-        nweet,
+        text: nweet,
         createdAt: Date.now(),
+        creatorId: user.uid,
       });
       setNweet("");
     } catch (error) {
@@ -54,7 +59,7 @@ function Nweeting() {
       <div>
         {nweets.map((nweet) => (
           <div key={nweet.id}>
-            <h4>{nweet.nweet}</h4>
+            <h4>{nweet.text}</h4>
           </div>
         ))}
       </div>

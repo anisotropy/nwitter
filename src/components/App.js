@@ -8,10 +8,12 @@ const App = () => {
     isLoggedIn: false,
     isInitialized: false,
   });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        setUser(user);
         setState((prevState) => ({
           ...prevState,
           isLoggedIn: true,
@@ -30,7 +32,7 @@ const App = () => {
   return (
     <>
       {state.isInitialized ? (
-        <Pages isLoggedIn={state.isLoggedIn} />
+        <Pages isLoggedIn={state.isLoggedIn} user={user} />
       ) : (
         <div>Initializing...</div>
       )}
