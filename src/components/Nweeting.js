@@ -1,4 +1,4 @@
-import { database } from "appFirebase";
+import { database, storage } from "appFirebase";
 import {
   collection,
   addDoc,
@@ -6,11 +6,13 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import Nweet from "./Nweet";
 
 function Nweeting({ user }) {
-  const [state, setState] = useState({ nweet: "", nweets: [], attchment: "" });
+  const [state, setState] = useState({ nweet: "", nweets: [], attachment: "" });
 
   useEffect(() => {
     onSnapshot(
@@ -36,24 +38,32 @@ function Nweeting({ user }) {
       fileReader.onloadend = (fileEvent) => {
         setState((prev) => ({
           ...prev,
-          attchment: fileEvent.currentTarget.result,
+          attachment: fileEvent.currentTarget.result,
         }));
       };
       fileReader.readAsDataURL(file);
     } else {
-      setState((prev) => ({ ...prev, attchment: "" }));
+      setState((prev) => ({ ...prev, attachment: "" }));
     }
   };
 
   const onSubmit = async (event) => {
     event.preventDefault();
+    let attachment = "";
+    if (state.attachment) {
+      const storageRef = ref(storage, `${user.uid}/${uuidv4()}`);
+      await uploadString(storageRef, state.attachment, "data_url");
+      attachment = await getDownloadURL(storageRef);
+    }
+
     try {
       await addDoc(collection(database, "nweet"), {
         text: state.nweet,
         createdAt: Date.now(),
         creatorId: user.uid,
+        attachment,
       });
-      setState((prev) => ({ ...prev, nweet: "" }));
+      setState((prev) => ({ ...prev, nweet: "", attachment: "" }));
     } catch (error) {
       console.log(error);
     }
@@ -70,8 +80,8 @@ function Nweeting({ user }) {
           onChange={onChange}
         />
         <input type="file" accept="image/*" onChange={onFileChange} />
-        {state.attchment && (
-          <img src={state.attchment} width={50} height={50} alt="Profile" />
+        {state.attachment && (
+          <img src={state.attachment} width={50} height={50} alt="Profile" />
         )}
         <button type="submit">Nweet</button>
       </form>
