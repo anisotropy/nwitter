@@ -1,12 +1,15 @@
-import { database } from "appFirebase";
+import { database, storage } from "appFirebase";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useState } from "react";
 
-const Nweet = ({ nweet, isOwner }) => {
+const Nweet = ({ nweet, user }) => {
   const [state, setState] = useState({ isEditting: false, text: nweet.text });
 
   const onDelete = async () => {
-    deleteDoc(doc(database, "nweet", nweet.id));
+    await deleteDoc(doc(database, "nweet", nweet.id));
+    const attachmentRef = ref(storage, `${user.uid}/${nweet.attachmentId}`);
+    await deleteObject(attachmentRef);
   };
 
   const onToggleEdit = () => {
@@ -45,8 +48,15 @@ const Nweet = ({ nweet, isOwner }) => {
       ) : (
         <>
           <h4>{nweet.text}</h4>
-          {nweet.attachment && <img src={nweet.attachment} alt="attachment" />}
-          {isOwner && (
+          {nweet.attachmentUrl && (
+            <img
+              src={nweet.attachmentUrl}
+              width={50}
+              height={50}
+              alt="attachment"
+            />
+          )}
+          {user.uid === nweet.creatorId && (
             <>
               <button onClick={onDelete}>Delete</button>
               <button onClick={onToggleEdit}>Edit</button>

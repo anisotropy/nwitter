@@ -49,11 +49,13 @@ function Nweeting({ user }) {
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    let attachment = "";
+    let attachmentId = "";
+    let attachmentUrl = "";
     if (state.attachment) {
-      const storageRef = ref(storage, `${user.uid}/${uuidv4()}`);
+      attachmentId = uuidv4();
+      const storageRef = ref(storage, `${user.uid}/${attachmentId}`);
       await uploadString(storageRef, state.attachment, "data_url");
-      attachment = await getDownloadURL(storageRef);
+      attachmentUrl = await getDownloadURL(storageRef);
     }
 
     try {
@@ -61,7 +63,8 @@ function Nweeting({ user }) {
         text: state.nweet,
         createdAt: Date.now(),
         creatorId: user.uid,
-        attachment,
+        attachmentId,
+        attachmentUrl,
       });
       setState((prev) => ({ ...prev, nweet: "", attachment: "" }));
     } catch (error) {
@@ -87,11 +90,7 @@ function Nweeting({ user }) {
       </form>
       <div>
         {state.nweets.map((nweet) => (
-          <Nweet
-            key={nweet.id}
-            nweet={nweet}
-            isOwner={nweet.creatorId === user.uid}
-          />
+          <Nweet key={nweet.id} nweet={nweet} user={user} />
         ))}
       </div>
     </>
