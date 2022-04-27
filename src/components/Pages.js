@@ -7,7 +7,7 @@ import ProfilePage from "pages/ProfilePage";
 const Pages = ({ isLoggedIn, user }) => {
   return (
     <BrowserRouter>
-      {isLoggedIn && <Navitation />}
+      {isLoggedIn && <Navitation user={user} />}
       {isLoggedIn ? (
         <Routes>
           <Route path="/" element={<HomePage user={user} />} />
