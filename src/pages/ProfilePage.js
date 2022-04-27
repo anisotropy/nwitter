@@ -1,7 +1,7 @@
 import Profile from "components/Profile";
 
-const ProfilePage = () => {
-  return <Profile />;
+const ProfilePage = ({ user }) => {
+  return <Profile user={user} />;
 };
 
 export default ProfilePage;

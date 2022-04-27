@@ -11,7 +11,7 @@ const Pages = ({ isLoggedIn, user }) => {
       {isLoggedIn ? (
         <Routes>
           <Route path="/" element={<HomePage user={user} />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile" element={<ProfilePage user={user} />} />
         </Routes>
       ) : (
         <Routes>
