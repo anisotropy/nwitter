@@ -1,21 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Pages from "components/Pages";
 import { auth } from "appFirebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const App = () => {
   const [state, setState] = useState({
+    user: null,
     isLoggedIn: false,
     isInitialized: false,
   });
-  const [user, setUser] = useState(null);
+
+  const createUser = useCallback(
+    () => ({
+      uid: auth.currentUser.uid,
+      displayName: auth.currentUser.displayName,
+      update: () => {
+        setState((prev) => ({ ...prev, user: createUser() }));
+      },
+    }),
+    []
+  );
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user);
         setState((prevState) => ({
           ...prevState,
+          user: createUser(),
           isLoggedIn: true,
           isInitialized: true,
         }));
@@ -27,12 +38,12 @@ const App = () => {
         }));
       }
     });
-  }, []);
+  }, [createUser]);
 
   return (
     <>
       {state.isInitialized ? (
-        <Pages isLoggedIn={state.isLoggedIn} user={user} />
+        <Pages isLoggedIn={state.isLoggedIn} user={state.user} />
       ) : (
         <div>Initializing...</div>
       )}

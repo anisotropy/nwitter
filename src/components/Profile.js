@@ -38,6 +38,7 @@ const Profile = ({ user }) => {
   const onSubmit = async (event) => {
     event.preventDefault();
     await updateProfile(auth.currentUser, { displayName: state.displayName });
+    user.update();
   };
 
   return (
