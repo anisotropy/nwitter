@@ -33,6 +33,7 @@ const App = () => {
       } else {
         setState((prevState) => ({
           ...prevState,
+          user: null,
           isLoggedIn: false,
           isInitialized: true,
         }));

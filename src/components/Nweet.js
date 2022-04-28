@@ -8,8 +8,10 @@ const Nweet = ({ nweet, user }) => {
 
   const onDelete = async () => {
     await deleteDoc(doc(database, "nweet", nweet.id));
-    const attachmentRef = ref(storage, `${user.uid}/${nweet.attachmentId}`);
-    await deleteObject(attachmentRef);
+    if (nweet.attachmentId) {
+      const attachmentRef = ref(storage, `${user.uid}/${nweet.attachmentId}`);
+      await deleteObject(attachmentRef);
+    }
   };
 
   const onToggleEdit = () => {
